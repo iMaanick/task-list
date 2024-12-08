@@ -20,9 +20,10 @@ async def create_task(
         task: TaskCreate,
         user: User = Depends(fastapi_users.current_user(optional=True)),
 ) -> TaskResponse:
+    print(task)
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    new_task = await add_task(task, database)
+    new_task = await add_task(user.id, task, database)
     return new_task
 
 
@@ -35,7 +36,7 @@ async def delete_task(
 ) -> dict:
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    deleted_task_id = await delete_task_from_list(task_id, database)
+    deleted_task_id = await delete_task_from_list(user.id, task_id, database)
     if deleted_task_id is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return {"ok": True}
@@ -50,7 +51,7 @@ async def read_tasks(
 ) -> list[TaskResponse]:
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    tasks = await get_tasks(skip, limit, database)
+    tasks = await get_tasks(user.id, skip, limit, database)
     return tasks
 
 
@@ -63,7 +64,7 @@ async def update_task_title(
 ) -> TaskResponse:
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    updated_task = await update_task_title_by_id(task_id, task_update, database)
+    updated_task = await update_task_title_by_id(user.id, task_id, task_update, database)
     if updated_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return updated_task
@@ -78,7 +79,7 @@ async def update_task(
 ) -> TaskResponse:
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    updated_task = await update_task_by_id(task_id, task_update, database)
+    updated_task = await update_task_by_id(user.id, task_id, task_update, database)
     if updated_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return updated_task
@@ -93,7 +94,7 @@ async def reorder_tasks(
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
     try:
-        await tasks_reorder(reorder_data, database)
+        await tasks_reorder(user.id, reorder_data, database)
     except MissingTasksError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except TaskNotFoundError as e:

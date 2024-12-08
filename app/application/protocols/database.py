@@ -16,31 +16,31 @@ class UoW(ABC):
 
 class DatabaseGateway(ABC):
     @abstractmethod
-    async def add_task(self, task: TaskCreate) -> Task:
+    async def add_task(self, user_id: int, task: TaskCreate) -> Task:
         raise NotImplementedError
 
     @abstractmethod
-    async def delete_task_by_id(self, task_id: int) -> Optional[int]:
+    async def delete_task_by_id(self, user_id: int, task_id: int) -> Optional[int]:
         raise NotImplementedError
 
     @abstractmethod
-    async def change_tasks_position(self) -> None:
+    async def change_tasks_position(self,  user_id: int) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_tasks(self, skip: int, limit: int) -> list[Task]:
+    async def get_tasks(self, user_id: int, skip: int, limit: int) -> list[Task]:
         raise NotImplementedError
 
     @abstractmethod
-    async def update_task_title_by_id(self, task_id: int, task_update: TaskTitleUpdate) -> Optional[Task]:
+    async def update_task_title_by_id(self, user_id: int, task_id: int, task_update: TaskTitleUpdate) -> Optional[Task]:
         raise NotImplementedError
 
     @abstractmethod
-    async def update_task_by_id(self, task_id: int, task_update: TaskUpdate) -> Optional[Task]:
+    async def update_task_by_id(self, user_id: int, task_id: int, task_update: TaskUpdate) -> Optional[Task]:
         raise NotImplementedError
 
     @abstractmethod
-    async def reorder_tasks(self, reorder_data: ReorderRequest) -> None:
+    async def reorder_tasks(self, user_id: int, reorder_data: ReorderRequest) -> None:
         raise NotImplementedError
 
 
