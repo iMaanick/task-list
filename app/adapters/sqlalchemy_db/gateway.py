@@ -20,6 +20,7 @@ class SqlaGateway(DatabaseGateway):
             title=task.title,
             completed=task.completed,
             createdAt=datetime.utcnow(),
+            description=task.description,
             user_id=user_id
         )
         self.session.add(new_task)
