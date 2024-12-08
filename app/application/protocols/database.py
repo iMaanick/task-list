@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from app.application.models import TaskResponse, TaskCreate, Task, TaskTitleUpdate, TaskUpdate, ReorderRequest
+from app.application.models import TaskCreate, Task, TaskTitleUpdate, TaskUpdate, ReorderRequest
 
 
 class UoW(ABC):
@@ -42,3 +42,7 @@ class DatabaseGateway(ABC):
     @abstractmethod
     async def reorder_tasks(self, reorder_data: ReorderRequest) -> None:
         raise NotImplementedError
+
+
+class UserDataBaseGateway(ABC):
+    pass

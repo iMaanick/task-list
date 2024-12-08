@@ -8,7 +8,7 @@ from sqlalchemy.orm.exc import StaleDataError
 from app.adapters.sqlalchemy_db import models
 from app.application.exceptions import TaskNotFoundError, MissingTasksError, DataConflictError
 from app.application.models import TaskCreate, Task, TaskTitleUpdate, TaskUpdate, ReorderRequest
-from app.application.protocols.database import DatabaseGateway
+from app.application.protocols.database import DatabaseGateway, UserDataBaseGateway
 
 
 class SqlaGateway(DatabaseGateway):
@@ -90,3 +90,8 @@ class SqlaGateway(DatabaseGateway):
         except StaleDataError as e:
             await self.session.rollback()
             raise DataConflictError(f"Data conflict error: {str(e)}")
+
+
+class UserSqlaGateway(UserDataBaseGateway):
+    def __init__(self, session: AsyncSession):
+        self.session = session
