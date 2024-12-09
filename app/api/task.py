@@ -6,7 +6,7 @@ from app.adapters.sqlalchemy_db.models import User
 from app.application.exceptions import MissingTasksError, DataConflictError, TaskNotFoundError
 from app.application.fastapi_users import fastapi_users
 from app.application.models import TaskCreate, TaskResponse, TaskTitleUpdate, TaskUpdate, ReorderRequest
-from app.application.models.task import DeleteTaskResponse, ReorderTasksResponse
+from app.application.models.task import DeleteTaskResponse, ReorderTasksResponse, Task
 from app.application.protocols.database import DatabaseGateway, UoW
 from app.application.task import add_task, delete_task_from_list, get_tasks, update_task_title_by_id, update_task_by_id, \
     tasks_reorder
@@ -19,7 +19,7 @@ async def create_task(
         database: Annotated[DatabaseGateway, Depends()],
         task: TaskCreate,
         user: User = Depends(fastapi_users.current_user(optional=True)),
-) -> TaskResponse:
+) -> Task:
     """
     Creates a new task for the authenticated user.
 
@@ -112,7 +112,7 @@ async def read_tasks(
         user: User = Depends(fastapi_users.current_user(optional=True)),
         skip: int = 0,
         limit: int = 10,
-) -> list[TaskResponse]:
+) -> list[Task]:
     """
     Retrieves a list of tasks for the authenticated user.
 
@@ -162,7 +162,7 @@ async def update_task_title(
         database: Annotated[DatabaseGateway, Depends()],
         uow: Annotated[UoW, Depends()],
         user: User = Depends(fastapi_users.current_user(optional=True)),
-) -> TaskResponse:
+) -> Task:
     """
         Updates the title of a task for the authenticated user.
 
@@ -219,7 +219,7 @@ async def update_task(
         database: Annotated[DatabaseGateway, Depends()],
         uow: Annotated[UoW, Depends()],
         user: User = Depends(fastapi_users.current_user(optional=True)),
-) -> TaskResponse:
+) -> Task:
     """
        Updates a task's details for the authenticated user.
 
