@@ -65,7 +65,6 @@ class SqlaGateway(DatabaseGateway):
         if not task:
             return None
         task.title = task_update.title
-        await self.session.commit()
         return Task.model_validate(task)
 
     async def update_task_by_id(self, user_id: int, task_id: int, task_update: TaskUpdate) -> Optional[Task]:
@@ -76,7 +75,6 @@ class SqlaGateway(DatabaseGateway):
             return None
         task.completed = task_update.completed
         task.title = task_update.title
-        await self.session.commit()
         return Task.model_validate(task)
 
     async def reorder_tasks(self, user_id: int, reorder_data: ReorderRequest) -> None:

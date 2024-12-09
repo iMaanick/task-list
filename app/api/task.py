@@ -7,7 +7,7 @@ from app.application.exceptions import MissingTasksError, DataConflictError, Tas
 from app.application.fastapi_users import fastapi_users
 from app.application.models import TaskCreate, TaskResponse, TaskTitleUpdate, TaskUpdate, ReorderRequest
 from app.application.models.task import DeleteTaskResponse, ReorderTasksResponse
-from app.application.protocols.database import DatabaseGateway
+from app.application.protocols.database import DatabaseGateway, UoW
 from app.application.task import add_task, delete_task_from_list, get_tasks, update_task_title_by_id, update_task_by_id, \
     tasks_reorder
 
@@ -59,11 +59,12 @@ async def update_task_title(
         task_id: int,
         task_update: TaskTitleUpdate,
         database: Annotated[DatabaseGateway, Depends()],
+        uow: Annotated[UoW, Depends()],
         user: User = Depends(fastapi_users.current_user(optional=True)),
 ) -> TaskResponse:
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    updated_task = await update_task_title_by_id(user.id, task_id, task_update, database)
+    updated_task = await update_task_title_by_id(user.id, task_id, task_update, database, uow)
     if updated_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return updated_task
@@ -74,11 +75,12 @@ async def update_task(
         task_id: int,
         task_update: TaskUpdate,
         database: Annotated[DatabaseGateway, Depends()],
+        uow: Annotated[UoW, Depends()],
         user: User = Depends(fastapi_users.current_user(optional=True)),
 ) -> TaskResponse:
     if user is None:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    updated_task = await update_task_by_id(user.id, task_id, task_update, database)
+    updated_task = await update_task_by_id(user.id, task_id, task_update, database, uow)
     if updated_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return updated_task
@@ -88,6 +90,7 @@ async def update_task(
 async def reorder_tasks(
         reorder_data: ReorderRequest,
         database: Annotated[DatabaseGateway, Depends()],
+        uow: Annotated[UoW, Depends()],
         user: User = Depends(fastapi_users.current_user(optional=True)),
 ) -> ReorderTasksResponse:
     if user is None:

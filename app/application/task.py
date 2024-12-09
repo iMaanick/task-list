@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.application.models import TaskCreate, Task, TaskTitleUpdate, TaskUpdate, ReorderRequest
-from app.application.protocols.database import DatabaseGateway
+from app.application.protocols.database import DatabaseGateway, UoW
 
 
 async def add_task(
@@ -40,10 +40,12 @@ async def update_task_title_by_id(
         task_id: int,
         task_update: TaskTitleUpdate,
         database: DatabaseGateway,
+        uow: UoW,
 ) -> Optional[Task]:
     updated_task = await database.update_task_title_by_id(user_id, task_id, task_update)
     if updated_task is None:
         return None
+    await uow.commit()
     return updated_task
 
 
@@ -52,10 +54,12 @@ async def update_task_by_id(
         task_id: int,
         task_update: TaskUpdate,
         database: DatabaseGateway,
+        uow: UoW,
 ) -> Optional[Task]:
     updated_task = await database.update_task_by_id(user_id, task_id, task_update)
     if updated_task is None:
         return None
+    await uow.commit()
     return updated_task
 
 
