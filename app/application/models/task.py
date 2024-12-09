@@ -38,3 +38,11 @@ class Task(BaseModel):
     description: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class DeleteTaskResponse(BaseModel):
+    detail: str
+
+
+class ReorderTasksResponse(BaseModel):
+    detail: str
